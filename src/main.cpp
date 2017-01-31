@@ -12,9 +12,9 @@
 using namespace std;
 
 extern int compteur, compteur2, compteur_total, compteur_total2, model_S2_has_solution, model_SEP_has_solution, model_AP_has_solution,
-	nb_model_SEP; 
+	nb_model_SEP, flagIsParetoFrontCheckedForEfficiency; 
 
-
+int flagIsParetoFrontCheckedForEfficiency=0;
 #ifdef _DEBUG
    #ifndef DBG_NEW
       #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -55,8 +55,8 @@ int main()
 	<< _leaders_number << "; r_follower = " << _followers_number << "\n";
 	#endif 
 
-	//instance::intialize(_facilities_number,_customers_number,_leaders_number,_followers_number); 
-	instance::readInitialDataFromFile(_facilities_number,_customers_number,_leaders_number,_followers_number); 
+	instance::intialize(_facilities_number,_customers_number,_leaders_number,_followers_number); 
+	//instance::readInitialDataFromFile(_facilities_number,_customers_number,_leaders_number,_followers_number); 
 	//debug print
 
 	#ifdef ALGORITHM 

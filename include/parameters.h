@@ -28,7 +28,7 @@
 #define FOLLOWERS_NUMBER LEADERS_NUMBER 
 */
 //test 2  
-
+/*
 #define MAX_FACILITIES 51
 #define MAX_CUSTOMERS MAX_FACILITIES 
 
@@ -39,9 +39,9 @@
 #define CUSTOMERS_NUMBER  MAX_CUSTOMERS
 #define LEADERS_NUMBER 3
 #define FOLLOWERS_NUMBER LEADERS_NUMBER 
-
+*/
 //test 4
-/*
+
 #define MAX_FACILITIES 14
 #define MAX_CUSTOMERS MAX_FACILITIES 
 
@@ -52,7 +52,7 @@
 #define CUSTOMERS_NUMBER  MAX_CUSTOMERS
 #define LEADERS_NUMBER 4
 #define FOLLOWERS_NUMBER LEADERS_NUMBER 
-*/
+
 //algorithm parameters 
 #define NEIGHB_RATE_TS 0.3 // neighborhood rate in tabu search
 #define NEIGHB_RATE_MLS 0.5 // neighborhood rate in multilocal search in Genetic algorithm

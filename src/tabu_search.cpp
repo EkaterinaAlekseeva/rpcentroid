@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 
+extern int flagIsParetoFrontCheckedForEfficiency; 
 
 #ifdef _DEBUG
    #ifndef DBG_NEW
@@ -83,6 +84,7 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 	solution * infeasible_solution=NULL; 
 	do 
 	{
+		cout << "1. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
 		infeasible_solution=leader_neighbour->get_infeasible(follower_potential_pareto); 
 		if(infeasible_solution==NULL) break;
 		solution *tmp=infeasible_solution->get_efficient(); 
@@ -92,21 +94,26 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 		infeasible_solution=NULL;  //clean 
 	}
 	while (true);
-	//returning the pareto front 
-	//(infeasible_solution!=NULL) &&
-	if( (follower_potential_pareto->keep_efficient()!=0) && (follower_potential_pareto->is_feasible()==true)) {
-		#ifdef	ALGORITHM
-			cout << "after algorithm1: follower_potential_pareto size = " << follower_potential_pareto->size() <<endl ; 	
-		#endif 
-		return follower_potential_pareto; 
-	}
-	else 
 	{
-		delete follower_potential_pareto;
-		#ifdef	ALGORITHM
-			cout << "after algorithm1: follower_potential_pareto size = NULL" <<endl ; 	
-		#endif
-		return NULL; 
+		follower_potential_pareto->replace_by_efficient_solution();
+		//returning the pareto front 
+		//(infeasible_solution!=NULL) &&
+		if((follower_potential_pareto->is_feasible()==true)) {
+			#ifdef	ALGORITHM
+				cout << "after algorithm1: follower_potential_pareto size = " << follower_potential_pareto->size() <<endl ; 
+				cout << "2. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
+			#endif 
+			return follower_potential_pareto; 
+		}
+		else 
+		{
+			delete follower_potential_pareto;
+			#ifdef	ALGORITHM
+				cout << "after algorithm1: follower_potential_pareto size = NULL" <<endl ; 	
+				cout << "3. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
+			#endif
+			return NULL; 
+		}
 	}
 }
 

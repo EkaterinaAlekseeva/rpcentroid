@@ -4,7 +4,9 @@
 #include <crtdbg.h>
 #include "..\include\genetic_algorithm.h"
 
+
 using namespace std; 
+extern int flagIsParetoFrontCheckedForEfficiency;
 
 #ifdef _DEBUG
    #ifndef DBG_NEW
@@ -232,6 +234,7 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 			cout << " begin of algorithm2 , Genetic Algo, _pareto->size= " << pareto->size() << endl ;
 			if (pareto->size() >=1)
 			{
+
 			cout << " Pareto solutions : " << endl; ; 
 			for(unsigned i=0; i<pareto->size(); i++)
 				{
@@ -249,6 +252,7 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 	else
 		{
 			#ifdef	ALGORITHM
+			cout << "Case else : initial Pareto is empty" << endl;
 			//check if leader and follower solutions have common open facilities
 					for (unsigned ii=0;ii<instance::nb_facilities; ii++)
 					{
@@ -281,7 +285,10 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 				#endif
 				Pareto *enfants=multi_local_search(enfant1); 
 				if(pareto->update(enfants)) 
+				{
 					tmp=generations;
+					flagIsParetoFrontCheckedForEfficiency=0;
+				}
 				else if(pareto->size()==1) {
 					tmp=0;
 					#ifdef	ALGORITHM
@@ -293,6 +300,7 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 			}
 	#ifdef	ALGORITHM
 	cout << "end of MultiGenetic. Pareto size =" << pareto->size() << endl << endl; 
+	cout << "G. flagIsParetoFrontCheckedForEfficiency= " << flagIsParetoFrontCheckedForEfficiency<< endl;
 	#endif
 	return pareto; 
 	}

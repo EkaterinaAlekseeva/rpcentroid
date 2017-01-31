@@ -354,15 +354,17 @@ solution* solution::get_efficient()
 		#endif 
 		return NULL; // si cette solution est efficace (ignorer le voisin, et passer un autre voir pour leader ) 
 		}
-	solution *retourSEP=new solution(&sep,this);
-	model_SEP_has_solution++;
-	return retourSEP;
+	else {
+		solution *retourSEP=new solution(&sep,this);
+		model_SEP_has_solution++;
 		#ifdef ALGORITHM 
 		cout << "SEP has found a new efficient solution :" << endl;
 		for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
 			if (retourSEP->follower[ii]==1) cout << ii << " " ;
 		cout << endl;
 		#endif 
+	return retourSEP;
+	}
 	}
 
 bool solution::is_infeasible()

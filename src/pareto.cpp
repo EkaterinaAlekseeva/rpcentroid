@@ -6,6 +6,7 @@
 #include <random>
 #include <vector>
 using namespace std; 
+extern int flagIsParetoFrontCheckedForEfficiency;
 
 #ifdef _DEBUG
    #ifndef DBG_NEW
@@ -57,13 +58,14 @@ bool Pareto::add(solution* s)
 			return false; 
 	push_back(new solution(*s)); 
 	#ifdef	ALGORITHM
-	/*
-	cout<<" follower solution was added to Pareto : "; 
+	
+	cout<<" Pareto::add: follower solution was added to Pareto : "; 
 	for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
 			if (s->follower[ii]==1) cout << ii << " " ;
 	cout << endl;
-	*/
+	
 	#endif
+	flagIsParetoFrontCheckedForEfficiency =0;
 	updated=true; 
 	return true; 
 	}
@@ -103,6 +105,7 @@ Pareto::~Pareto()
 
 unsigned Pareto::keep_efficient()
 	{
+		flagIsParetoFrontCheckedForEfficiency=1;
     for(unsigned i=0; i<size();i++)
 		if(!at(i)->is_efficient()) 
 			{
@@ -132,7 +135,7 @@ unsigned Pareto::replace_by_efficient_solution()
 			{
 		    delete at(i); 
 			at(i)=NULL; 
-			this->add(newEfficientSol);
+			at(i)=newEfficientSol;
 			}
 	}
     for(unsigned i=0; i<size()-1;i++)
@@ -146,6 +149,8 @@ unsigned Pareto::replace_by_efficient_solution()
     for(unsigned i=0; i<size();i++)
 		if(at(i)==NULL)
 			this->erase(this->begin()+i,end()); 
+
+	flagIsParetoFrontCheckedForEfficiency =1 ; 
 	return size();  
 	}
 
@@ -184,5 +189,6 @@ solution* Pareto::worst_leader()
     for(iterator i=(begin()+1); i<end();i++) 
 			if(retour->leader_objective > (*i)->leader_objective)
 				retour=*i; 
+	flagIsParetoFrontCheckedForEfficiency =1;
 	return retour; 
 	}
