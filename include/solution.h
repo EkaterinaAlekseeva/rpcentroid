@@ -36,6 +36,7 @@ class follower_solution : public leader_solution
 	public: 
 	unsigned follower_objective1;   //to be computed
 	unsigned follower_objective2; //to be computed
+	int efficiency; // -1 means that follower solution has not been checked for efficiency; 0 means that follower solution is not efficient; 1 means that follower solution is efficient
 	//unsigned follower_potential_facilities[MAX_FACILITIES][MAX_CUSTOMERS]; 
 	vector<vector<unsigned>> follower_potential_facilities; 
 	void follower_intialize();  

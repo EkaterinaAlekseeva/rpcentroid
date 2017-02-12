@@ -88,6 +88,7 @@ Pareto* MultiGenetic::multi_local_search(solution* current_solution)
 
 	while(pareto->updated)
 		{
+		flagIsParetoFrontCheckedForEfficiency =0;
 		pareto->updated=false; 
 		Pareto *tmp=new Pareto(NULL); //create temporary pareto 
 		//visit neighbours
@@ -252,7 +253,7 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 	else
 		{
 			#ifdef	ALGORITHM
-			cout << "Case else : initial Pareto is empty" << endl;
+			cout << "Initial Pareto is empty" << endl;
 			//check if leader and follower solutions have common open facilities
 					for (unsigned ii=0;ii<instance::nb_facilities; ii++)
 					{
@@ -287,7 +288,6 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 				if(pareto->update(enfants)) 
 				{
 					tmp=generations;
-					flagIsParetoFrontCheckedForEfficiency=0;
 				}
 				else if(pareto->size()==1) {
 					tmp=0;

@@ -1,5 +1,3 @@
-
-
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -35,6 +33,7 @@ Movement::Movement(unsigned _i1, unsigned _i2)
 	cout << "TabuList is updated with " << i1 << "; " << i2 << endl;
 	#endif 
 }
+
 bool Movement::equal(unsigned _i1, unsigned _i2)
 {
 	return ((i1==_i1)&&(i2==_i2))||((i2==_i1)&&(i1==_i2));
@@ -95,10 +94,10 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 	}
 	while (true);
 	{
-		follower_potential_pareto->replace_by_efficient_solution();
+		flagIsParetoFrontCheckedForEfficiency=1;
+		// follower_potential_pareto->replace_by_efficient_solution();
 		//returning the pareto front 
-		//(infeasible_solution!=NULL) &&
-		if((follower_potential_pareto->is_feasible()==true)) {
+		if (infeasible_solution!=NULL && follower_potential_pareto->is_feasible()==true) {
 			#ifdef	ALGORITHM
 				cout << "after algorithm1: follower_potential_pareto size = " << follower_potential_pareto->size() <<endl ; 
 				cout << "2. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
@@ -116,6 +115,7 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 		}
 	}
 }
+//===================================================================================
 
 solution*  TabuSearch::algorithm2(solution* leader_neighbour,Pareto* follower_potential_pareto)
 { 
@@ -139,6 +139,7 @@ solution*  TabuSearch::algorithm2(solution* leader_neighbour,Pareto* follower_po
 	}
 	while (true);
 	//returning the pareto front 
+	flagIsParetoFrontCheckedForEfficiency=1;
 	my_assert("Error PARETO SHOULD BE FEASIBLE!!!!",follower_potential_pareto2->is_feasible()==false); 			
 	solution* pessimistic_solution=NULL; 
 	//if((worst_solution!=NULL) && (follower_potential_pareto2->keep_efficient()!=0)) 
@@ -148,6 +149,7 @@ solution*  TabuSearch::algorithm2(solution* leader_neighbour,Pareto* follower_po
 	delete follower_potential_pareto2; 
 	return pessimistic_solution; 
 }
+//===================================================================================
 
 solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 {	

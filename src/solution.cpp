@@ -82,6 +82,7 @@ void follower_solution::follower_intialize()
 		while (leader[index] || follower[index]);
 		follower[index]=1; 
 		}
+	efficiency=-1; 
 	//debug print
 
 		for (unsigned i=0;i<instance::nb_facilities; i++)
@@ -89,8 +90,7 @@ void follower_solution::follower_intialize()
 				cout << "constructeure follower_solution : " << i << " Errrorrrrr " << endl ;
 
 	}
-
-
+//===================================================
 follower_solution::follower_solution() 
 	{
 	follower.resize(instance::nb_facilities);
@@ -101,7 +101,7 @@ follower_solution::follower_solution()
 
 	follower_intialize(); // we need generate RANDOM follower solution only for Genetic algo
 	}
-
+//===================================================
 follower_solution::follower_solution(leader_solution& _solution)  
 	{
 	leader_solution::leader_solution(_solution); 
@@ -111,7 +111,7 @@ follower_solution::follower_solution(leader_solution& _solution)
 			if ((follower[i]==1) && (leader[i]==1))
 			 cout << i << " Errrorrrrr\n" ;
 	}
-
+//===================================================
 void follower_solution::set_follower_potential_facilities()
 	{
 	for(int c=0;c<instance::nb_customers;c++)
@@ -124,13 +124,11 @@ void follower_solution::set_follower_potential_facilities()
 			follower_potential_facilities[f][c]=(instance::distances[f][c]<distance); 
 		}
 	}
-
+//===================================================
 float follower_solution::utilitity(float weight)
 	{
 	return weight*follower_objective1+(1-weight)*follower_objective2; 
 	}
-
-
 
 //===================================================
 //===================================================
@@ -176,11 +174,9 @@ solution::solution(Model*model, solution*s)
 			if (leader[i]==1) cout << i<< " " ;
 		cout << endl;
 	#endif
-
 	update_objectives(); 
 	}
-
-
+//===================================================
 solution& solution::operator=(const solution& _solution) 
 	{
 	neighbours_visited=_solution.neighbours_visited; 
@@ -192,11 +188,12 @@ solution& solution::operator=(const solution& _solution)
 	leader=_solution.leader; 
  	//memcpy(follower, _solution.follower, sizeof(unsigned)*MAX_FACILITIES);
 	follower=_solution.follower; 
+	efficiency= _solution.efficiency;
  	//memcpy(customers, _solution.customers, sizeof(unsigned)*MAX_CUSTOMERS);
 	customers=_solution.customers; 
     return *this;
 	}
-
+//===================================================
 bool solution::operator==(const solution& s)
 	{
 	bool objective1=(follower_objective1 == s.follower_objective1); 
@@ -302,11 +299,14 @@ bool solution::is_efficient()
 			#ifdef ALGORITHM 
 			cout << "OFV in SEP =0 => solution is efficient" << endl;
 			#endif 
+			this->efficiency=1;
 			return true;
 		}
 		else
 			{
+				this->efficiency=0; 
 				solution *retourSEPefficient=new solution(&sep,this); 
+				retourSEPefficient->efficiency=1;
 				#ifdef ALGORITHM 
 				cout << "SEP OFV =" << sep.objective_get() << "=> solution is not efficient." << endl; 
 				cout << "New efficient solution is :" << endl;
@@ -322,6 +322,9 @@ bool solution::is_efficient()
 						if (retourSEPefficient->follower[i]==1)
 						cout << i << " " ;
 					}
+				if (retourSEPefficient->efficiency==1) cout << "It is efficient solution." << " ";
+				if (retourSEPefficient->efficiency==0)  cout << "It is NON-efficient solution." << " ";
+				if (retourSEPefficient->efficiency==-1)  cout << "Efficiency has not been checked yet (it should not be the case)." << " ";
 				cout << endl << endl;
 				#endif 
 				// return new solution(sep,this);
@@ -330,9 +333,10 @@ bool solution::is_efficient()
 	}
 	else
 	{
-#ifdef ALGORITHM 
-		cout << "SEP does not have any feasible solution. It is ERROR" << endl;
-#endif 
+		this->efficiency=0; 
+		#ifdef ALGORITHM 
+			cout << "SEP does not have any feasible solution. It is ERROR" << endl;
+		#endif 
 		return false;
 	}
 	/// fin de corrige par K.
@@ -352,10 +356,13 @@ solution* solution::get_efficient()
 		#ifdef ALGORITHM 
 			cout << "solution is  efficient" << endl;
 		#endif 
+		this->efficiency=1;
 		return NULL; // si cette solution est efficace (ignorer le voisin, et passer un autre voir pour leader ) 
 		}
 	else {
+		this->efficiency=0;
 		solution *retourSEP=new solution(&sep,this);
+		retourSEP->efficiency=1;
 		model_SEP_has_solution++;
 		#ifdef ALGORITHM 
 		cout << "SEP has found a new efficient solution :" << endl;
@@ -398,10 +405,11 @@ solution* solution::get_infeasible(Pareto* pareto)
 		{
 		model_S2_has_solution++;
 		retour=new solution(&s2,this); // get one infeasible solution 
+		retour->efficiency=-1; //S2 solution has not been checked for efficiency yet
 		#ifdef ALGORITHM 
 			cout << "S2 has feasible solution :" << endl;
 			for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
-				if (this->follower[ii]==1) cout << ii << " " ;
+				if (retour->follower[ii]==1) cout << ii << " " ;
 			cout << endl;
 		#endif 
 		}
@@ -432,6 +440,7 @@ solution* solution::make_leader_worst(Pareto* pareto)
 	else 
 		{
 		solution *retourAP=new solution(&ap,this); 
+		retourAP->efficiency=-1; 
 		#ifdef ALGORITHM
 		cout << "AP has a solution \n";
 		cout << "Leader: ";
@@ -440,6 +449,7 @@ solution* solution::make_leader_worst(Pareto* pareto)
 		cout << " Follower : ";
 		for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
 		{if (retourAP->follower[ii]==1) cout << ii << " " ;}
+		if (retourAP->efficiency==-1) cout << " AP solution has not been checked for efficiency yet" ;
 		cout << endl;
 		#endif
 		model_AP_has_solution++;
