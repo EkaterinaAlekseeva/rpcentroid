@@ -4,11 +4,12 @@
 #include <crtdbg.h>
 #include "..\include\tabu_search.h"
 #include "..\include\parameters.h"
+#include "..\include\aux_functions.h"
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <memory>
-#include <time.h>
+
 using namespace std;
 
 extern int compteur, compteur2, compteur_total, compteur_total2, model_S2_has_solution, model_SEP_has_solution, model_AP_has_solution,
@@ -20,7 +21,7 @@ int flagIsParetoFrontCheckedForEfficiency=0;
       #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
       #define new DBG_NEW
    #endif
-#endif  // _DEBUG
+#endif  // 
 
 int main()
 	{
@@ -44,7 +45,6 @@ int main()
 	myfile.close();
 	*/
 	
-	//if((stream = freopen("DebugPrint.txt", "w", stderr)) == NULL) exit(-1);
 	if((stream = freopen("DebugPrint.txt", "w", stdout)) == NULL) exit(-1);
 
 	unsigned _facilities_number=FACILITIES_NUMBER,_customers_number=CUSTOMERS_NUMBER,_leaders_number=LEADERS_NUMBER, _followers_number=FOLLOWERS_NUMBER; 
@@ -53,6 +53,9 @@ int main()
 	cout << "Instance: \n" ;
 	cout	<< "KOLI = " << _facilities_number << "; KOLJ = " <<_customers_number << "; p_leader =" 
 	<< _leaders_number << "; r_follower = " << _followers_number << "\n";
+	cout << "Parameters : " <<  "\n" << "NEIGHB_RATE_TS = " << NEIGHB_RATE_TS << "\n"; 
+	cout <<  "NEIGHB_RATE_MLS = " << NEIGHB_RATE_MLS << "\n";
+	cout << "NB_GeneticAlgo_Generations = " << NB_GeneticAlgo_Generations << "\n";
 	#endif 
 
 	instance::intialize(_facilities_number,_customers_number,_leaders_number,_followers_number); 
@@ -100,11 +103,14 @@ int main()
 	cout << "big_number =" << instance::big_number << "\n "; 
 	#endif 
 
-	clock_t tStart = clock(); 
+	//cout << "tStart : "<< currentDateTime() <<endl;
+
+	AuxFunctions fun;
+	cout << "Current Time : " << fun.currentDateTime() << endl;
 
 	TabuSearch ts; 
 	MultiGenetic::generations=NB_GeneticAlgo_Generations; 
-	solution* s=ts.compute(100,8); //Algorithm parameters: ts.compute(nb_iterations, list_tabu_size)
+	solution* s=ts.compute(1,8); //Algorithm parameters: ts.compute(nb_iterations, list_tabu_size)
 
 	#ifdef MEMORY
 	std::cout<<"#Solution objects total "<<compteur_total<<endl; 
@@ -119,9 +125,8 @@ int main()
 
 	cout<< "rand = " << rand() <<endl; 
 
-	
-	cout << " TIME taken (in sec) : " << (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
-	
+	cout << "Current Time : " << fun.currentDateTime() << endl;
+
 	_CrtDumpMemoryLeaks();
 	int retour; 
 	cin>> retour; return retour; 

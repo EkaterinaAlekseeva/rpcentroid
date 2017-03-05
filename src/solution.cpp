@@ -71,6 +71,14 @@ leader_solution::leader_solution(leader_solution& _solution)
 //===================================================
 //===================================================
 //===================================================
+follower_solution::~follower_solution()
+	{
+	/*
+	if((efficiency==0)&&efficiency_solution_copy)
+		delete efficiency_solution_copy; 
+	*/
+	}
+
 void follower_solution::follower_intialize() 
 	{
 	for (unsigned i=0;i<instance::nb_facilities; i++)
@@ -84,7 +92,6 @@ void follower_solution::follower_intialize()
 		}
 	efficiency=-1; 
 	//debug print
-
 		for (unsigned i=0;i<instance::nb_facilities; i++)
 			if ((follower[i]==1) && (leader[i]==1))
 				cout << "constructeure follower_solution : " << i << " Errrorrrrr " << endl ;
@@ -134,12 +141,12 @@ float follower_solution::utilitity(float weight)
 //===================================================
 //===================================================
 
-
 solution::solution() 
 	{
 	resize(); 
 	neighbours_visited=false; 
 	update_objectives(); 
+	efficiency=-1; 
 	}
 
 solution::solution(const solution& _solution)
@@ -174,7 +181,8 @@ solution::solution(Model*model, solution*s)
 			if (leader[i]==1) cout << i<< " " ;
 		cout << endl;
 	#endif
-	update_objectives(); 
+	update_objectives();
+	efficiency=-1; 
 	}
 //===================================================
 solution& solution::operator=(const solution& _solution) 
@@ -290,6 +298,22 @@ bool solution::is_efficient()
 					}
 				cout << endl;
 		#endif 
+
+	if(efficiency==1) 
+		{
+		cout<<"OPTMIZAION1"<<endl; 
+		return true; 
+		}
+	/*
+	else if(efficiency==0) 
+		{
+		cout<<"OPTMIZAION2"<<endl; 
+		return new solution(*efficiency_solution_copy); 
+		}
+	*/
+	else
+		cout<<"NO-OPTMIZAION3"<<endl; 
+
 	SEP sep(*this);
 	
 	if (sep.solve("sep","max")==true)
@@ -307,6 +331,7 @@ bool solution::is_efficient()
 				this->efficiency=0; 
 				solution *retourSEPefficient=new solution(&sep,this); 
 				retourSEPefficient->efficiency=1;
+				//efficiency_solution_copy=new solution(*retourSEPefficient); 
 				#ifdef ALGORITHM 
 				cout << "SEP OFV =" << sep.objective_get() << "=> solution is not efficient." << endl; 
 				cout << "New efficient solution is :" << endl;
@@ -349,6 +374,21 @@ solution* solution::get_efficient()
 #ifdef ALGORITHM 
 	cout << " SEP model: get_efficient solution   " << endl;
 #endif
+	if(efficiency==1) 
+		{
+		cout<<"OPTMIZAION1"<<endl; 
+		return NULL; 
+		}
+	/*
+	else if(efficiency==0) 
+		{
+		cout<<"OPTMIZAION2"<<endl; 
+		return new solution(*efficiency_solution_copy); 
+		}
+	*/
+	else
+		cout<<"NO-OPTMIZAION3"<<endl; 
+
 	SEP sep(*this); 
 	sep.solve("sep","max"); //always true 
 	if(sep.objective_get()==0) 
@@ -363,6 +403,7 @@ solution* solution::get_efficient()
 		this->efficiency=0;
 		solution *retourSEP=new solution(&sep,this);
 		retourSEP->efficiency=1;
+		//*efficiency_solution_copy=*retourSEP;  
 		model_SEP_has_solution++;
 		#ifdef ALGORITHM 
 		cout << "SEP has found a new efficient solution :" << endl;
@@ -388,6 +429,7 @@ solution* solution::get_infeasible(Pareto* pareto)
 	{
 	//vérifier (using CPLEX/S2 model) si l'une des solution du followers qui se trouvent dans pareto est infeasable 
 	//infeasable = ne vérifie les contraintes du leader
+	
 #ifdef ALGORITHM 
 	cout << "S2 model checks if there is solution that dominates current Pareto efficient solutions and is infeasible" << endl;
 #endif 
@@ -413,6 +455,7 @@ solution* solution::get_infeasible(Pareto* pareto)
 			cout << endl;
 		#endif 
 		}
+	
 	return retour; 
 	}
 
@@ -442,15 +485,15 @@ solution* solution::make_leader_worst(Pareto* pareto)
 		solution *retourAP=new solution(&ap,this); 
 		retourAP->efficiency=-1; 
 		#ifdef ALGORITHM
-		cout << "AP has a solution \n";
-		cout << "Leader: ";
-		for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
-		{if (retourAP->leader[ii]==1) cout << ii << " " ;}
-		cout << " Follower : ";
-		for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
-		{if (retourAP->follower[ii]==1) cout << ii << " " ;}
-		if (retourAP->efficiency==-1) cout << " AP solution has not been checked for efficiency yet" ;
-		cout << endl;
+			cout << "AP has a solution \n";
+			cout << "Leader: ";
+			for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
+			{if (retourAP->leader[ii]==1) cout << ii << " " ;}
+			cout << " Follower : ";
+			for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
+			{if (retourAP->follower[ii]==1) cout << ii << " " ;}
+			if (retourAP->efficiency==-1) cout << " AP solution has not been checked for efficiency yet" ;
+			cout << endl;
 		#endif
 		model_AP_has_solution++;
 		return retourAP; 

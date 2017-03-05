@@ -18,7 +18,6 @@ using namespace std;
 class Model 
 	{
 	public:
-
 	// dimensions 
 	short nb_var_int; //int variables  
 	short nb_var_real;  //float variables 
@@ -26,6 +25,8 @@ class Model
 	short nb_const_eq; //equality  
 	short nb_const_leq; //inferiority 
 	short nb_const; //inferiority 
+
+	//int efficiency;  
 
 	// Ilog variables 
 	IloEnv env;

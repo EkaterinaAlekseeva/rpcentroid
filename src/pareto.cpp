@@ -92,12 +92,14 @@ bool Pareto::update(Pareto* pareto)
 Pareto::~Pareto()
 	{
 		this; 
+	/*
 	for(unsigned i=0; i<size(); i++)
 		if(at(i)) 
 			if(at(i)->customers.size()!=instance::nb_customers)
 				cout<<"ddddddddddddddddd"<<endl; 
 			else 
 				delete at(i);
+	*/
 	clear(); 
 	}
 
@@ -169,15 +171,11 @@ solution* Pareto::worst_leader()
  solution* Pareto::worst_efficient_leader()
 	{
 	//choisir une solution la premiere solution inéfficace rencontré 
+	/*
+	//le mettre en commentaire permet de réduire le temps de moitité 
 	for(iterator i=begin(); i<end();i++) 
 		if(!(*i)->is_efficient()) 
 			return (*i); 
-	/*
-	for(int i=0; i<size();i++) 
-		{
-		solution*tmp=at(i); 
-		if(!(tmp->is_efficient())) return (at(i)); 
-		}
 	*/
 	//choisir la solution efficace ayant le plus petit objectif 
 	solution*retour=*begin(); 

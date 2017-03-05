@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "..\include\tabu_search.h"
+#include "..\include\aux_functions.h"
 #include <iostream>
 #include <fstream>
+
 
 extern int flagIsParetoFrontCheckedForEfficiency; 
 
@@ -97,7 +99,8 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 		flagIsParetoFrontCheckedForEfficiency=1;
 		// follower_potential_pareto->replace_by_efficient_solution();
 		//returning the pareto front 
-		if (infeasible_solution!=NULL && follower_potential_pareto->is_feasible()==true) {
+		//(infeasible_solution!=NULL &&
+		if  (follower_potential_pareto->is_feasible()==true) {
 			#ifdef	ALGORITHM
 				cout << "after algorithm1: follower_potential_pareto size = " << follower_potential_pareto->size() <<endl ; 
 				cout << "2. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
@@ -142,8 +145,8 @@ solution*  TabuSearch::algorithm2(solution* leader_neighbour,Pareto* follower_po
 	flagIsParetoFrontCheckedForEfficiency=1;
 	my_assert("Error PARETO SHOULD BE FEASIBLE!!!!",follower_potential_pareto2->is_feasible()==false); 			
 	solution* pessimistic_solution=NULL; 
-	//if((worst_solution!=NULL) && (follower_potential_pareto2->keep_efficient()!=0)) 
-	if(follower_potential_pareto2->keep_efficient()!=0) 
+	if((worst_solution!=NULL) && (follower_potential_pareto2->keep_efficient()!=0)) 
+	//if(follower_potential_pareto2->keep_efficient()!=0) 
 		pessimistic_solution=follower_potential_pareto2->worst_leader(); //à partir d'ici, nous avons un pareto front où toutes les solutions (1) sont efficaces et (2) vérifient les contraints du leader.	
 	//si 
 	delete follower_potential_pareto2; 
@@ -158,6 +161,7 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 	unsigned swap_index2(0);
 	TabuList*tabu_list=new TabuList(list_tabu_size);
 	solution* initial_solution=new solution(); //a random solution   
+/* 05.03.17 comments of zero iteration of tabu search
 
 	#ifdef	ALGORITHM
 	cout << "Initial LEADER solution is : " ; 	
@@ -175,8 +179,14 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 	}
 	#endif 
 
+	AuxFunctions fun;
+	cout << "Current local time and date before algorithm1: " << fun.currentDateTime() << endl;
+	
 	Pareto* follower_potential_pareto=algorithm1(initial_solution);			 
+		
 	solution* pessimistic_solution=algorithm2(initial_solution,follower_potential_pareto); 
+
+	cout << "Current local time and date before algorithm2: " << fun.currentDateTime() << endl;
 
 	if(follower_potential_pareto) 
 			delete follower_potential_pareto; 
@@ -187,31 +197,25 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 	#ifdef	ALGORITHM
 		cout << "initial LEADER OFV is : " << initial_solution->leader_objective << endl ; 	
 	#endif 
-
-		/**	cout << "Initial FOLLOWER solution is : " ; 	
-		for (unsigned i=0;i<instance::nb_facilities; i++)
-			if (initial_solution->follower[i]==1)
-				 cout << i << " " ;
-		cout << endl; 
-		cout << "initial FOLLOWER objective function values are : " << initial_solution->follower_objective1 << " ; " << initial_solution->follower_objective2 << endl ; 	*/
-	/// starting from this I changed TS
+ 05.03.17 */
+	/* 05.03.17 initialization of OFVs without calling algorithm 1 or 2 */
+		initial_solution->leader_objective = -instance::big_number; 
+		initial_solution->follower_objective1 = -instance::big_number; 
+		initial_solution->follower_objective2 = -instance::big_number; 
+	/* 05.03.17 end of initialization */
 
 	solution* current_solution =initial_solution; //changemnet de nom. meme objet. 
 	solution* record_ts=new solution(*current_solution); 
 
 	while(nb_iterations>0)  // check: criteria to stop !!! in TS we move to the neigh solution even if it is worse than the initial one 
 	{
+		AuxFunctions fun;
+		cout << "Current local time and date: " << fun.currentDateTime() << endl;
 		cout << " Tabu Search. Iteration  : " << nb_iterations << "\n "; 	 
 		//TabuList*tabu_list_tmp=new TabuList(neighbourhood_size);
 		solution* best_neighbour=new solution(*current_solution); 
 		best_neighbour->leader_objective=-instance::big_number;
 
-		/*before new swap:
-		 for(unsigned i=0; i<neighbourhood_size; i++) //visit leader neighbours
-			 {
-			solution* leader_neighbour=new solution(*current_solution,100);// CHECK THAT IT IS NOT in TABULIST!!!! 
-		*/
-		/// new swap 
 		static unsigned tempSolution[MAX_FACILITIES]; 
 		unsigned index=0;
 		unsigned neighborNumber=0;
@@ -257,7 +261,6 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 					#ifdef ALGORITHM
 					cout << "pr = " << pr << endl; 
 					cout << " Looking at Neighbourhood :" << endl; 				
-					//cout << "LEADER Neighbour " << i+1 << ":" << endl; 	
 					cout << "LEADER Neighbour " << neighborNumber << ":" << endl; 	
 					for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
 					if (leader_neighbour->leader[ii]==1)

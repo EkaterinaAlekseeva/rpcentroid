@@ -30,17 +30,22 @@ class leader_solution
 	}; 
 
 
+class solution; 
 
 class follower_solution : public leader_solution
 	{
 	public: 
 	unsigned follower_objective1;   //to be computed
 	unsigned follower_objective2; //to be computed
+
 	int efficiency; // -1 means that follower solution has not been checked for efficiency; 0 means that follower solution is not efficient; 1 means that follower solution is efficient
 	//unsigned follower_potential_facilities[MAX_FACILITIES][MAX_CUSTOMERS]; 
+	solution*efficiency_solution_copy; 
+
 	vector<vector<unsigned>> follower_potential_facilities; 
 	void follower_intialize();  
 	follower_solution(); 
+	~follower_solution(); 
 	follower_solution(leader_solution& _solution); 
 
 	//unsigned follower[MAX_FACILITIES]; 
@@ -52,7 +57,6 @@ class follower_solution : public leader_solution
 
 class solution : public follower_solution
 	{
-
 	public: 
 	bool neighbours_visited; 
 	//unsigned customers[MAX_CUSTOMERS]; 

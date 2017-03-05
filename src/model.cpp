@@ -140,6 +140,7 @@ void Model::constraints_initialize(vector<vector<int>>& left,vector<int>& right)
 
 unsigned Model::solve(string name, string min_max)
 	{
+		//if(efficiency!=-1) return; 
 		//min or max
 		IloObjective aa; 
 		if(min_max=="min")
