@@ -13,9 +13,8 @@
 using namespace std;
 
 extern int compteur, compteur2, compteur_total, compteur_total2, model_S2_has_solution, model_SEP_has_solution, model_AP_has_solution,
-	nb_model_SEP, flagIsParetoFrontCheckedForEfficiency; 
+	nb_model_SEP; 
 
-int flagIsParetoFrontCheckedForEfficiency=0;
 #ifdef _DEBUG
    #ifndef DBG_NEW
       #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -141,8 +140,6 @@ public:
 int i; 
 C(){i=333;};
 };
-
-
 
 class A 
 {

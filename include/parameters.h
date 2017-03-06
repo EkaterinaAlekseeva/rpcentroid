@@ -54,7 +54,7 @@
 //algorithm parameters 
 #define NEIGHB_RATE_TS 0.3 // neighborhood rate in tabu search
 #define NEIGHB_RATE_MLS 0.5 // neighborhood rate in multilocal search in Genetic algorithm
-#define NB_GeneticAlgo_Generations 10
+#define NB_GeneticAlgo_Generations 0
 
 #define MAX_PARETO (2*MAX_FACILITIES)
 #define MAXIMUM_ROWS (4+MAX_CUSTOMERS+MAX_FACILITIES+3*MAX_PARETO) 

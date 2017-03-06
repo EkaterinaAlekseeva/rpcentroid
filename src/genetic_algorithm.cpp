@@ -6,7 +6,6 @@
 
 
 using namespace std; 
-extern int flagIsParetoFrontCheckedForEfficiency;
 
 #ifdef _DEBUG
    #ifndef DBG_NEW
@@ -88,7 +87,6 @@ Pareto* MultiGenetic::multi_local_search(solution* current_solution)
 
 	while(pareto->updated)
 		{
-		flagIsParetoFrontCheckedForEfficiency =0;
 		pareto->updated=false; 
 		Pareto *tmp=new Pareto(NULL); //create temporary pareto 
 		//visit neighbours
@@ -300,7 +298,6 @@ Pareto*MultiGenetic::compute(solution& leader_solution, short _type, short _ls_t
 			}
 	#ifdef	ALGORITHM
 	cout << "end of MultiGenetic. Pareto size =" << pareto->size() << endl << endl; 
-	cout << "G. flagIsParetoFrontCheckedForEfficiency= " << flagIsParetoFrontCheckedForEfficiency<< endl;
 	#endif
 	return pareto; 
 	}

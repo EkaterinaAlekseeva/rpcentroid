@@ -6,9 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-
-extern int flagIsParetoFrontCheckedForEfficiency; 
-
 #ifdef _DEBUG
    #ifndef DBG_NEW
       #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -85,7 +82,6 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 	solution * infeasible_solution=NULL; 
 	do 
 	{
-		cout << "1. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
 		infeasible_solution=leader_neighbour->get_infeasible(follower_potential_pareto); 
 		if(infeasible_solution==NULL) break;
 		solution *tmp=infeasible_solution->get_efficient(); 
@@ -96,14 +92,12 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 	}
 	while (true);
 	{
-		flagIsParetoFrontCheckedForEfficiency=1;
-		// follower_potential_pareto->replace_by_efficient_solution();
+		follower_potential_pareto->replace_by_efficient_solution();
 		//returning the pareto front 
 		//(infeasible_solution!=NULL &&
 		if  (follower_potential_pareto->is_feasible()==true) {
 			#ifdef	ALGORITHM
 				cout << "after algorithm1: follower_potential_pareto size = " << follower_potential_pareto->size() <<endl ; 
-				cout << "2. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
 			#endif 
 			return follower_potential_pareto; 
 		}
@@ -112,7 +106,6 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 			delete follower_potential_pareto;
 			#ifdef	ALGORITHM
 				cout << "after algorithm1: follower_potential_pareto size = NULL" <<endl ; 	
-				cout << "3. flagIsParetoFrontCheckedForEfficiency =" << flagIsParetoFrontCheckedForEfficiency << endl; 
 			#endif
 			return NULL; 
 		}
@@ -142,7 +135,6 @@ solution*  TabuSearch::algorithm2(solution* leader_neighbour,Pareto* follower_po
 	}
 	while (true);
 	//returning the pareto front 
-	flagIsParetoFrontCheckedForEfficiency=1;
 	my_assert("Error PARETO SHOULD BE FEASIBLE!!!!",follower_potential_pareto2->is_feasible()==false); 			
 	solution* pessimistic_solution=NULL; 
 	if((worst_solution!=NULL) && (follower_potential_pareto2->keep_efficient()!=0)) 
@@ -161,48 +153,11 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 	unsigned swap_index2(0);
 	TabuList*tabu_list=new TabuList(list_tabu_size);
 	solution* initial_solution=new solution(); //a random solution   
-/* 05.03.17 comments of zero iteration of tabu search
-
-	#ifdef	ALGORITHM
-	cout << "Initial LEADER solution is : " ; 	
-	for (unsigned i=0;i<instance::nb_facilities; i++)
-	{
-		if (initial_solution->leader[i]==1)
-			 cout << i << " " ;
-	}
-		cout << endl;
-	//check if leader and follower solution have the common open facilities
-	for (unsigned ii=0;ii<instance::nb_facilities; ii++)
-	{
-		if ((initial_solution->follower[ii]==1) && (initial_solution->leader[ii]==1))
-		cout << ii << "Error at tabu search before calling algorithm1 \n" << endl ;
-	}
-	#endif 
-
-	AuxFunctions fun;
-	cout << "Current local time and date before algorithm1: " << fun.currentDateTime() << endl;
-	
-	Pareto* follower_potential_pareto=algorithm1(initial_solution);			 
-		
-	solution* pessimistic_solution=algorithm2(initial_solution,follower_potential_pareto); 
-
-	cout << "Current local time and date before algorithm2: " << fun.currentDateTime() << endl;
-
-	if(follower_potential_pareto) 
-			delete follower_potential_pareto; 
-	if(pessimistic_solution==NULL)	
-		initial_solution->leader_objective = -instance::big_number; // initialising to a small number
-	/// end of my added part
-	delete pessimistic_solution; 
-	#ifdef	ALGORITHM
-		cout << "initial LEADER OFV is : " << initial_solution->leader_objective << endl ; 	
-	#endif 
- 05.03.17 */
-	/* 05.03.17 initialization of OFVs without calling algorithm 1 or 2 */
+	/* initialization of OFVs */
 		initial_solution->leader_objective = -instance::big_number; 
 		initial_solution->follower_objective1 = -instance::big_number; 
 		initial_solution->follower_objective2 = -instance::big_number; 
-	/* 05.03.17 end of initialization */
+	/* end of initialization */
 
 	solution* current_solution =initial_solution; //changemnet de nom. meme objet. 
 	solution* record_ts=new solution(*current_solution); 
@@ -261,7 +216,7 @@ solution* TabuSearch::compute(unsigned nb_iterations, unsigned list_tabu_size)
 					#ifdef ALGORITHM
 					cout << "pr = " << pr << endl; 
 					cout << " Looking at Neighbourhood :" << endl; 				
-					cout << "LEADER Neighbour " << neighborNumber << ":" << endl; 	
+					cout << "LEADER Neighbour " << neighborNumber << ": " ; 	
 					for (unsigned ii=0;ii<instance::nb_facilities; ii++)	
 					if (leader_neighbour->leader[ii]==1)
 						 cout << ii << " " ;

@@ -6,7 +6,6 @@
 #include <random>
 #include <vector>
 using namespace std; 
-extern int flagIsParetoFrontCheckedForEfficiency;
 
 #ifdef _DEBUG
    #ifndef DBG_NEW
