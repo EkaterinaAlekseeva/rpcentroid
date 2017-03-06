@@ -18,6 +18,7 @@ class Pareto : public std::vector<solution*>
 	bool add(solution* s); 
 	bool update(solution _solution); 
 	bool update(Pareto* population); 
+	void cleanIdenticalSolutions();
 
 	unsigned keep_efficient(); 
 	unsigned replace_by_efficient_solution(); // the idea is to replace all inefficient solution in Pareto front by efficient ones found by SEP model

@@ -93,6 +93,15 @@ Pareto*  TabuSearch::algorithm1(solution* leader_neighbour)
 	while (true);
 	{
 		follower_potential_pareto->replace_by_efficient_solution();
+		#ifdef	ALGORITHM
+				cout << "follower_potential_pareto size BEFORE CLEAN = " << follower_potential_pareto->size() <<endl ; 
+		#endif
+		// CLEAN REPEATED SOLUTIONS FROM PARETO:
+		if (follower_potential_pareto->size() > 1) 
+			{ follower_potential_pareto->cleanIdenticalSolutions(); }
+		#ifdef	ALGORITHM
+				cout << "follower_potential_pareto size AFTER CLEAN = " << follower_potential_pareto->size() <<endl ; 
+		#endif
 		//returning the pareto front 
 		//(infeasible_solution!=NULL &&
 		if  (follower_potential_pareto->is_feasible()==true) {

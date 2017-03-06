@@ -87,6 +87,52 @@ bool Pareto::update(Pareto* pareto)
 	return retour; 
 	}
 
+void Pareto::cleanIdenticalSolutions()
+	{
+		/*
+	for(iterator i=begin(); i<end()-1;i++)
+	{
+		solution* pareto_s1=(*i); 
+		for(iterator j=i+1; j<end();j++)
+		{
+			solution* pareto_s2=(*j); 
+			if((*pareto_s1)==(*pareto_s2)){
+				erase(j);  
+				if(size()) j=+1; // vérifier s'il y a pas un autre point a supprimer 
+				else 						
+				 break; 
+			}
+		}
+		if(size()) i=begin(); // vérifier s'il y a pas un autre point a supprimer 
+		else 						
+			break; 
+	}*/
+		for(iterator i=begin(); i<end();i++)
+		{ 
+			solution* pareto_s1=(*i); 
+			for(iterator j=i+1; j<end();j++)
+			{
+				solution* pareto_s2=(*j); 
+				if(pareto_s1!=NULL && pareto_s2!=NULL && (*pareto_s1)==(*pareto_s2)) 
+						(*j)=NULL; 
+				
+			}
+		}
+    for(iterator i=begin(); i<end()-1;i++)
+   		if((*i)==NULL)
+			{
+			for(iterator j=i+1; j<end();j++)
+				if (!(*j)==NULL)
+				{
+				  	(*i)=(*j);
+					(*j)=NULL; 
+					break;
+				}
+			}
+		for(unsigned i=0; i<size();i++)
+		if(at(i)==NULL)
+			this->erase(this->begin()+i,end());
+}
 
 Pareto::~Pareto()
 	{
